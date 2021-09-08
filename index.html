@@ -13,6 +13,8 @@
         var socket = io("", {
             username: "nguyen huu vu"
         });
+
+        
         socket.on('client', (data) => {
             console.log(data)
         })
