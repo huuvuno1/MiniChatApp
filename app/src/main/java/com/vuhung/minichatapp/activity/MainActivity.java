@@ -1,8 +1,10 @@
-package com.vuhung.minichatapp;
+package com.vuhung.minichatapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.vuhung.minichatapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
