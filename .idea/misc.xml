@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/ProjectAndroid/MiniChatApp/app/src/main/res/drawable/background_input.xml" value="0.19743589743589743" />
+        <entry key="..\:/ProjectAndroid/MiniChatApp/app/src/main/res/layout/activity_login.xml" value="0.16666666666666666" />
+        <entry key="..\:/ProjectAndroid/MiniChatApp/app/src/main/res/layout/activity_register.xml" value="0.16203703703703703" />
+        <entry key="..\:/ProjectAndroid/MiniChatApp/app/src/main/res/layout/activity_start.xml" value="0.1" />
         <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/activity_start.xml" value="0.209375" />
       </map>
     </option>
