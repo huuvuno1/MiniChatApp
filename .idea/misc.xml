@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/activity_login.xml" value="0.209375" />
+        <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/activity_main.xml" value="0.209375" />
+        <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/activity_register.xml" value="0.209375" />
         <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/activity_start.xml" value="0.209375" />
       </map>
     </option>

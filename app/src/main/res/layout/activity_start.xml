@@ -17,7 +17,7 @@
             android:textAlignment="center"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:textColor="@color/teal_200"
+            android:textColor="@color/primary_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mini Chat"/>
@@ -31,7 +31,7 @@
             android:layout_centerInParent="true"
             android:textAlignment="center"
             android:textSize="17sp"
-            android:textColor="@color/teal_200"
+            android:textColor="@color/primary_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Btl Android cơ bản"/>
@@ -40,7 +40,7 @@
             android:layout_below="@+id/app_title"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/teal_200"
+            android:textColor="@color/secondary_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nguyễn Hữu Vũ - Nguyễn Mạnh Hùng"/>
