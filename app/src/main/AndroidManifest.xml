@@ -11,6 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniChatApp">
         <activity
+            android:name=".activity.ChatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.UserActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.StartActivity"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -32,6 +38,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
+</application>
 
 </manifest>

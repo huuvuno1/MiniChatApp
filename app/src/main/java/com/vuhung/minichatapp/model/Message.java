@@ -11,6 +11,10 @@ public class Message {
     public Message() {
     }
 
+    public Message(String content) {
+        this.content = content;
+    }
+
     public Message(String sender, String receiver, String content, Date time) {
         this.sender = sender;
         this.receiver = receiver;

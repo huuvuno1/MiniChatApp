@@ -1,14 +1,30 @@
 package com.vuhung.minichatapp.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String username;
     private String fullName;
     private String email;
     private String phoneNumber;
     private String password;
     private String address;
+    private int resourceId;
 
     public User() {
+    }
+
+    public User(int resourceId, String email, String name) {
+        this.resourceId = resourceId;
+        this.email = email;
+        this.fullName = name;
+    }
+    public int getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
     }
 
     public String getUsername() {
@@ -57,17 +73,5 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", password='" + password + '\'' +
-                ", address='" + address + '\'' +
-                '}';
     }
 }
