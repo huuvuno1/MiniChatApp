@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniChatApp">
         <activity
+            android:name=".activity.ChatActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.UserActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.StartActivity"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -28,9 +34,7 @@
             android:exported="true" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
     </application>
 
 </manifest>

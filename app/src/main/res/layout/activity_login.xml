@@ -70,7 +70,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSignIn"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/_45sdp"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/sign_in"
