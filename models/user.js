@@ -21,6 +21,16 @@ let user = new Schema(
     },
     gender: {
       type: String
+    },
+    avatar: {
+      type: String
+    },
+    verify: {
+      code: Number,
+      used: Boolean,
+      expires: {
+        type: Date, default: new Date(Date.now() + 60*60*8*1000)
+      }
     }
   },
   { collection: "user" }
