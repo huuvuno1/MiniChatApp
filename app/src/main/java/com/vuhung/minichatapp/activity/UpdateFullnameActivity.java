@@ -44,6 +44,7 @@ public class UpdateFullnameActivity extends AppCompatActivity {
                 String token = preferences.getString("token", "");
                 Map<String, String> body = new HashMap<>();
                 body.put("token", token);
+
                 body.put("fullname", inpName.getText().toString());
                 ApiService.apiService.updateProfile(body).enqueue(new Callback<BaseResponse<String>>() {
                     @Override
