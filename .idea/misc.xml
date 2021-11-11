@@ -20,6 +20,12 @@
         <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/item_container_sent_message.xml" value="0.209375" />
         <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/layout/item_container_user.xml" value="0.209375" />
         <entry key="..\:/Users/s2huu/Documents/chatnew/MiniChatApp/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.209375" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_chat.xml" value="0.13177083333333334" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_login.xml" value="0.25833333333333336" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_register.xml" value="0.25833333333333336" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_start.xml" value="0.25833333333333336" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_update_fullname.xml" value="0.19739583333333333" />
+        <entry key="..\:/code/android/forum/MiniChatApp/app/src/main/res/layout/activity_user.xml" value="0.25833333333333336" />
       </map>
     </option>
   </component>

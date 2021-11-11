@@ -92,6 +92,13 @@
             android:textStyle="bold"
             app:cornerRadius="@dimen/_8sdp"
             />
+        <!-- Define an ID for the button control. -->
+        <com.huawei.hms.support.hwid.ui.HuaweiIdAuthButton
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:id="@+id/HuaweiIdAuthButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/textCreateNewAccount"

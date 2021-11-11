@@ -30,7 +30,9 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp">
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            >
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/imageProfile"
@@ -51,11 +53,23 @@
                 />
         </FrameLayout>
 
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/_40sdp"
+            android:text="Loi"
+            android:inputType="textEmailAddress"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/red"
+            android:textSize="@dimen/_13ssp"
+            android:visibility="gone"/>
+
         <EditText
             android:id="@+id/inputName"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
-            android:layout_marginTop="@dimen/_40sdp"
             android:background="@drawable/background_input"
             android:hint="@string/name"
             android:imeOptions="actionNext"

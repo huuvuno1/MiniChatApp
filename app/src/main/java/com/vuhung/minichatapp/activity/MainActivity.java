@@ -5,10 +5,24 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.huawei.agconnect.config.AGConnectServicesConfig;
+import com.huawei.hms.aaid.HmsInstanceId;
+import com.huawei.hms.common.ApiException;
 import com.vuhung.minichatapp.R;
+import com.vuhung.minichatapp.api.ApiService;
+import com.vuhung.minichatapp.model.BaseResponse;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,12 +47,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
     }
-    private void showToast(String message) {
-        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
-    }
 
     private void SignOut() {
-        showToast("Signing out . . .");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();

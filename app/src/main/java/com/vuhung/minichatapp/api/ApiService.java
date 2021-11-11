@@ -2,14 +2,17 @@ package com.vuhung.minichatapp.api;
 
 import static com.vuhung.minichatapp.utils.Constant.DOMAIN;
 
-import com.vuhung.minichatapp.model.JwtResponse;
+import com.vuhung.minichatapp.model.BaseResponse;
 import com.vuhung.minichatapp.model.User;
+
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -20,8 +23,21 @@ public interface ApiService {
             .create(ApiService.class);
 
     @POST("api/v1/login")
-    Call<JwtResponse> signIn(@Body User user);
+    Call<BaseResponse<String>> signIn(@Body User user);
+
+    @POST("api/v1/login-token-huawei")
+    Call<BaseResponse<String>> signInWithTokenHuawei(@Body Map<String, String> jwtObject);
+
+    @POST("api/v1/user/update")
+    Call<BaseResponse<String>> updateProfile(@Body Map<String, String> jwtObject);
 
     @POST("api/v1/register")
-    Call<User> signUp(@Body User user);
+    Call<BaseResponse<String>> signUp(@Body User user);
+
+    @POST("api/v1/authentication")
+    Call<BaseResponse<String>> auth(@Body Map<String, String> jwtObject);
+
+
+    @POST("api/v1/send-device-token")
+    Call<BaseResponse<String>> sendDeviceTokenToServer(@Body Map<String, String> deviceTokenObject);
 }

@@ -4,7 +4,7 @@
     android:weightSum="10"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg"
+    android:background="@color/primary_dark"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:textAlignment="center"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/cardview_light_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mini Chat"/>
@@ -31,7 +31,7 @@
             android:layout_centerInParent="true"
             android:textAlignment="center"
             android:textSize="17sp"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Btl Android cơ bản"/>
@@ -40,7 +40,7 @@
             android:layout_below="@+id/app_title"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/hwid_auth_button_color_text_white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nguyễn Hữu Vũ - Nguyễn Mạnh Hùng"/>

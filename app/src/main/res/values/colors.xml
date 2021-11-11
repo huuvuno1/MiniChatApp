@@ -5,6 +5,7 @@
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#757575</color>
     <color name="white">#FFFF</color>
+    <color name="green">#4CAF50</color>
     <color name="nav_selected">#FF9800</color>
     <color name="input_background">#ECECEC</color>
     <color name="icon_background">#20FFFFFF</color>

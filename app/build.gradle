@@ -50,4 +50,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    implementation 'com.huawei.hms:push:6.1.0.300'
+    implementation 'com.huawei.hms:hwid:6.1.0.302'
 }
+apply plugin: 'com.huawei.agconnect'
