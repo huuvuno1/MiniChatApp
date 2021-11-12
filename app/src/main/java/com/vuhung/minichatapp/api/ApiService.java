@@ -11,7 +11,9 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -28,6 +30,9 @@ public interface ApiService {
     @POST("api/v1/login-token-huawei")
     Call<BaseResponse<String>> signInWithTokenHuawei(@Body Map<String, String> jwtObject);
 
+    @POST("api/v1/profile")
+    Call<BaseResponse<User>> fetchProfile(@Body Map<String, String> jwtObject);
+
     @POST("api/v1/user/update")
     Call<BaseResponse<String>> updateProfile(@Body Map<String, String> jwtObject);
 
@@ -38,6 +43,6 @@ public interface ApiService {
     Call<BaseResponse<String>> auth(@Body Map<String, String> jwtObject);
 
 
-    @POST("api/v1/send-device-token")
+    @POST("api/v1/add-device")
     Call<BaseResponse<String>> sendDeviceTokenToServer(@Body Map<String, String> deviceTokenObject);
 }

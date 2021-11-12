@@ -23,17 +23,37 @@
         app:tint="@color/white"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/select_user"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="@dimen/_16ssp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/imageBack1"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/imageBack1" />-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/_55sdp"
+        android:layout_marginEnd="@dimen/_35sdp"
         android:layout_height="wrap_content"
-        android:text="@string/select_user"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_16ssp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/imageBack1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageBack1" />
+        app:layout_constraintStart_toStartOf="@id/imageBack1"
+        app:layout_constraintTop_toTopOf="@+id/imageBack1">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_8sdp"
+            android:hint="Search..."
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16ssp"
+            android:textColorHint="@color/white"
+            android:textStyle="bold"
+            />
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

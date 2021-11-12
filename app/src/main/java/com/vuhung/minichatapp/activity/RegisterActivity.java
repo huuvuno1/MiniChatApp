@@ -57,8 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
             if (!(email.length() > 5 && email.contains("@")))
                 message = "Invalid email";
-            if (name.length() < 5 && !email.contains("@"))
-                message = "Invalid name";
+            if (name.length() < 5)
+                message = "Invalid full name";
             if (message != null) {
                 textMessage.setText(message);
                 textMessage.setVisibility(View.VISIBLE);

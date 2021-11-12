@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.vuhung.minichatapp.R;
 import com.vuhung.minichatapp.api.ApiService;
 import com.vuhung.minichatapp.model.BaseResponse;
+import com.vuhung.minichatapp.utils.Constant;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,40 +25,37 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
-        new Handler().postDelayed(() -> {
-            // get token
-            SharedPreferences preferences = getBaseContext().getSharedPreferences("mini_chat_app", MODE_PRIVATE);
-            String token = preferences.getString("token", "");
-            if (!"".equals(token)) {
-                Map<String, String> jwtObject = new HashMap<>();
-                jwtObject.put("token", token);
-                ApiService.apiService.auth(jwtObject).enqueue(new Callback<BaseResponse<String>>() {
-                    @Override
-                    public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> api_response) {
-                        BaseResponse<String> response = api_response.body();
-                        if (response.getStatus() == 200) {
-                            Intent intent = new Intent(StartActivity.this, MainActivity.class);
-                            startActivity(intent);
-                        }
-                        if (response.getStatus() == 8888) {
-                            startActivity(new Intent(StartActivity.this, UpdateFullnameActivity.class));
-                        }
-                        else {
-                            startActivity(new Intent(StartActivity.this, LoginActivity.class));
-                        }
+        // get token
+        SharedPreferences preferences = getBaseContext().getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
+        String token = preferences.getString("token", "");
+        if (!"".equals(token)) {
+            Map<String, String> jwtObject = new HashMap<>();
+            jwtObject.put("token", token);
+            ApiService.apiService.auth(jwtObject).enqueue(new Callback<BaseResponse<String>>() {
+                @Override
+                public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> api_response) {
+                    BaseResponse<String> response = api_response.body();
+                    if (response.getStatus() == 200) {
+                        Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
-
-                    @Override
-                    public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+                    else if (response.getStatus() == 8888) {
+                        startActivity(new Intent(StartActivity.this, UpdateFullnameActivity.class));
+                    }
+                    else {
                         startActivity(new Intent(StartActivity.this, LoginActivity.class));
                     }
-                });
-            }
-            else {
-                startActivity(new Intent(StartActivity.this, LoginActivity.class));
-            }
-            finish();
-        }, 1500);
+                }
+
+                @Override
+                public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+                    startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                }
+            });
+        }
+        else {
+            startActivity(new Intent(StartActivity.this, LoginActivity.class));
+        }
+        finish();
     }
 }

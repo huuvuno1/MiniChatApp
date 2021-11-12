@@ -16,6 +16,7 @@ import com.vuhung.minichatapp.api.ApiService;
 import com.vuhung.minichatapp.model.BaseResponse;
 import com.vuhung.minichatapp.model.User;
 import com.vuhung.minichatapp.utils.Constant;
+import com.vuhung.minichatapp.utils.DeviceTokenUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class UpdateFullnameActivity extends AppCompatActivity {
                 ApiService.apiService.updateProfile(body).enqueue(new Callback<BaseResponse<String>>() {
                     @Override
                     public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
+                        DeviceTokenUtil.sendDeviceTokenToServer(getApplicationContext());
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     }
 

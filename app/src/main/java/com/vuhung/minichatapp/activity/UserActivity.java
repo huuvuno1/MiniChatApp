@@ -7,18 +7,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.vuhung.minichatapp.R;
 import com.vuhung.minichatapp.adapters.UsersAdapter;
 import com.vuhung.minichatapp.model.User;
+import com.vuhung.minichatapp.socket.MySocket;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.socket.client.Socket;
+
 
 public class UserActivity extends AppCompatActivity {
-
+    private List<User> list;
     private AppCompatImageView imageView;
     private RecyclerView rcvData;
     private UsersAdapter usersAdapter;
@@ -26,33 +32,44 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        imageView = findViewById(R.id.imageBack1);
-        rcvData = findViewById(R.id.usersRecyclerView);
-        usersAdapter = new UsersAdapter(this, getListUser());
+        getView();
+        setListeners();
+        bindDataToView();
+    }
+
+    private void bindDataToView() {
+        list = new ArrayList<>();
+        usersAdapter = new UsersAdapter(this, list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         rcvData.setLayoutManager(linearLayoutManager);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rcvData.addItemDecoration(itemDecoration);
         rcvData.setAdapter(usersAdapter);
-        setListeners();
+        getListUser();
     }
 
-    private List<User> getListUser() {
-        List<User> list = new ArrayList<>();
-        list.add(new User(R.drawable.ic_launcher_foreground,"alo","Manh Hung"));
-        list.add(new User(R.drawable.ic_launcher_background,"Where are you from?","Huu Vu"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"How are you?","Duc Cuong"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"Hello","Van lap"));
-        list.add(new User(R.drawable.ic_launcher_background,"Hi","Van Quang"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"Good Bye!","Quoc Cuong"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"Good Morning","Tien Dung"));
-        list.add(new User(R.drawable.ic_launcher_background,"Say Hello","Nguyen Nga"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"Thank You","Tien Dat"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"Thanks","Thu Huyen"));
-        list.add(new User(R.drawable.ic_launcher_background,"chào bạn","Thanh Hung"));
-        list.add(new User(R.drawable.ic_launcher_foreground,"cảm ơn bạn","Van Quyet"));
-        return list;
+    private void getView() {
+        imageView = findViewById(R.id.imageBack1);
+        rcvData = findViewById(R.id.usersRecyclerView);
     }
+
+    private void getListUser() {
+        Socket socket = MySocket.getInstanceSocket();
+        socket.emit("fetch_all_user");
+        socket.on("fetch_all_user", data -> {
+            Log.e("test", data[0].toString());
+            Gson gson = new Gson();
+            List<User> users = gson.fromJson(data[0].toString(), new TypeToken<List<User>>(){}.getType());
+            list.addAll(users);
+        });
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        usersAdapter.notifyDataSetChanged();
+    }
+
 
     private void setListeners() {
         imageView.setOnClickListener(view -> onBackPressed());

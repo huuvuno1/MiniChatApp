@@ -30,6 +30,7 @@ import com.vuhung.minichatapp.api.ApiService;
 import com.vuhung.minichatapp.model.BaseResponse;
 import com.vuhung.minichatapp.model.User;
 import com.vuhung.minichatapp.utils.Constant;
+import com.vuhung.minichatapp.utils.DeviceTokenUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -212,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("token", response.body().getData());
                 editor.commit();
 
+                DeviceTokenUtil.sendDeviceTokenToServer(getApplicationContext());
                 if (response.body().getStatus() == 8888) {
                     startActivity(new Intent(getApplicationContext(), UpdateFullnameActivity.class));
                 } else {

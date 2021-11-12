@@ -1,11 +1,15 @@
 package com.vuhung.minichatapp.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
     private String username;
+    @SerializedName("fullname")
     private String fullName;
     private String email;
+    @SerializedName("phone_number")
     private String phoneNumber;
     private String password;
     private String address;
