@@ -53,7 +53,6 @@ module.exports = {
         }
         return null
     },
-
     
     sendNotication: async function (url = '', data = {}) {
     const response = await fetch(url, {

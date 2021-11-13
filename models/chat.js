@@ -10,9 +10,9 @@ let chat = new Schema(
     messages: [
         {
             sender: String,
-            message: String, 
+            content: String, 
             timestamp: {
-                type: Date, default: Date.now
+                type: Date, default: Date.now()
             }
         }
     ]
