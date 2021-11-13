@@ -8,17 +8,23 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.vuhung.minichatapp.R;
+import com.vuhung.minichatapp.adapters.UserChatAdapter;
 import com.vuhung.minichatapp.api.ApiService;
 import com.vuhung.minichatapp.model.BaseResponse;
 import com.vuhung.minichatapp.model.User;
+import com.vuhung.minichatapp.model.UserChat;
 import com.vuhung.minichatapp.socket.MySocket;
 import com.vuhung.minichatapp.utils.Constant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -30,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "token_device";
     private AppCompatImageView signOut;
     private FloatingActionButton actionButton;
-    TextView txtName;
+    private TextView txtName;
+    private RecyclerView recyclerView;
+    private UserChatAdapter userChatAdapter;
 
 
     @Override
@@ -41,6 +49,21 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
         startSocket();
         //fillData();
+
+        // nham vi tri -> chuyen qua chat -> doi ten bundle key
+//        Bundle bundle = getIntent().getExtras();
+//        if (bundle == null)
+//            return;
+//        User user = (User) bundle.get("object_user");
+        List<UserChat> userChats = new ArrayList<>();
+        userChats.add(new UserChat("", "Nguyen Huu Vu", "Vu", "hu hu"));
+        userChats.add(new UserChat("", "Nguyen Huu Vu", "Vu", "hu hu"));
+        userChatAdapter = new UserChatAdapter(this, userChats);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(userChatAdapter);
+        userChatAdapter.notifyDataSetChanged();
+        recyclerView.scrollToPosition(userChats.size() - 1);
     }
 
     private void startSocket() {
@@ -61,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         signOut = findViewById(R.id.imageSignOut);
         actionButton = findViewById(R.id.fabNewChat);
         txtName = findViewById(R.id.textName);
+        recyclerView = findViewById(R.id.userChatHistoryRecyclerView);
     }
 
     private void fillData() {

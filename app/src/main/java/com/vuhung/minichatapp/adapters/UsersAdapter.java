@@ -48,12 +48,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         holder.textEmail.setText(user.getEmail());
         holder.textUsername.setText(user.getUsername());
 
-        holder.layoutItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onClickGoToDetail(user);
-            }
-        });
+        holder.layoutItem.setOnClickListener(view -> onClickGoToDetail(user));
     }
 
     private void onClickGoToDetail(User user){

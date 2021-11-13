@@ -19,6 +19,7 @@ import com.vuhung.minichatapp.adapters.MessageAdapter;
 import com.vuhung.minichatapp.model.ChatHistory;
 import com.vuhung.minichatapp.model.Message;
 import com.vuhung.minichatapp.model.User;
+import com.vuhung.minichatapp.model.UserChat;
 import com.vuhung.minichatapp.socket.MySocket;
 import com.vuhung.minichatapp.utils.Constant;
 
@@ -56,6 +57,14 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         partner = (User) bundle.get("object_user");
+
+        if (partner == null) {
+            UserChat userChat = (UserChat) bundle.get("object_user_from_main");
+            partner = new User();
+            partner.setUsername(userChat.getUsername());
+            partner.setFullName(userChat.getName());
+        }
+
         TextView txtNameChat = findViewById(R.id.textNameChat);
         txtNameChat.setText(partner.getFullName());
 
