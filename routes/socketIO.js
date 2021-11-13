@@ -1,7 +1,8 @@
 
 const utils = require('../utils/custom')
 const User = require('../models/user');
-const Chat = require('../models/chat')
+const Chat = require('../models/chat');
+const user = require('../models/user');
 const userOnline = new Map();
 // {
 //     "username_value" => ["id_socket_1", "id2_socket_2"],
@@ -68,6 +69,31 @@ module.exports = {
             })
 
             
+            socket.on('fetch_user_chat', async () => {
+                const chats = await Chat.find({
+                    "members": {
+                        $in: [socket.username]
+                    }
+                })
+                
+                const users = await User.find()
+                // console.log("chat user", chats, socket.username)
+                const result = []
+                chats.forEach(chat => {
+                    const partner_username = chat.members[0] == socket.username ? chat.members[1] : chat.members[0]
+                    const user = users.filter(u => u.username == partner_username)[0]
+                    const user_r = {...user._doc, content: chat.messages.pop().content}
+                   // user.content = 
+                    console.log("user detail chat", user)
+                    result.push(user_r)
+                })
+                
+
+                // console.log("fetch user chat from main", result)
+                io.to(`${socket.id}`).emit('fetch_user_chat', JSON.stringify(result))
+
+            })
+
             // fetch all message
             socket.on('fetch_chat_history', async usernameFriend => {
                 console.log('fetch chat with user: ', usernameFriend)
@@ -80,6 +106,12 @@ module.exports = {
                         'members': [usernameFriend, socket.username]
                     })
                 }
+
+                // let chat = await Chat.findOne({
+                //     'members': {
+                //         $all: [socket.username, usernameFriend]
+                //     }
+                // })
 
                 console.log("fetch chat list: ", chat)
                 io.to(`${socket.id}`).emit('fetch_chat_history', JSON.stringify(chat))
@@ -113,7 +145,9 @@ module.exports = {
                 await new Chat(chat).save()
 
                 // send to partner
-                userOnline.get(data.receiver).forEach(idSocket => {
+                let ids = userOnline.get(data.receiver)
+                if (!ids) return
+                ids.forEach(idSocket => {
                     io.to(idSocket).emit('receive_message', JSON.stringify(mess))
                 })
             })
