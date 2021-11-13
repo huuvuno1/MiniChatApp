@@ -91,7 +91,8 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             User user = new User();
-            user.setEmail(email);
+//            user.setEmail(email);
+            user.setUsername(email);
             user.setPassword(password);
             signIn.setEnabled(false);
             ApiService.apiService.signIn(user).enqueue(new Callback<BaseResponse<String>>() {

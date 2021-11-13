@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 import com.vuhung.minichatapp.R;
 import com.vuhung.minichatapp.api.ApiService;
 import com.vuhung.minichatapp.model.BaseResponse;
@@ -47,7 +48,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
         String token = preferences.getString("token", "");
         MySocket.start(token);
-
+        MySocket.getInstanceSocket().on("my_info", data -> {
+            User user = new Gson().fromJson(data[0].toString(), User.class);
+            Constant.MY_USERNAME = user.getUsername();
+            this.runOnUiThread(() -> {
+                this.txtName.setText(user.getFullName());
+            });
+        });
     }
 
     private void getView() {

@@ -81,6 +81,7 @@ public class MySocket {
     public static void stop() {
         if (instance != null) {
             instance.disconnect();
+            isListening = false;
             instance = null;
         }
     }

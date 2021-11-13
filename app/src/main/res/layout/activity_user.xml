@@ -47,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/_8sdp"
+            android:focusable="false"
             android:hint="Search..."
             android:textColor="@color/white"
             android:textSize="@dimen/_16ssp"

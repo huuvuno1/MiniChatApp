@@ -61,13 +61,16 @@ public class UserActivity extends AppCompatActivity {
             Gson gson = new Gson();
             List<User> users = gson.fromJson(data[0].toString(), new TypeToken<List<User>>(){}.getType());
             list.addAll(users);
+            this.runOnUiThread(() -> {
+                this.usersAdapter.notifyDataSetChanged();
+            });
         });
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        usersAdapter.notifyDataSetChanged();
+//        try {
+//            Thread.sleep(300);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        usersAdapter.notifyDataSetChanged();
     }
 
 

@@ -46,6 +46,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         holder.imageProfile.setImageResource(user.getResourceId());
         holder.textName.setText(user.getFullName());
         holder.textEmail.setText(user.getEmail());
+        holder.textUsername.setText(user.getUsername());
 
         holder.layoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,13 +78,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
         private ConstraintLayout layoutItem;
         private ImageView imageProfile;
-        private TextView textName, textEmail;
+        private TextView textName, textEmail, textUsername;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             imageProfile = itemView.findViewById(R.id.imageProfile);
             textName = itemView.findViewById(R.id.textName);
             textEmail = itemView.findViewById(R.id.textEmail);
+            textUsername = itemView.findViewById(R.id.text_username_hidden);
             layoutItem = itemView.findViewById(R.id.layout_item1);
         }
     }
