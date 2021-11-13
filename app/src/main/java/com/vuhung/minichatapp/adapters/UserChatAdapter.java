@@ -42,7 +42,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserCh
             return;
         UserChat user = users.get(position);
         holder.textChat.setText(user.getContent());
-        holder.textName.setText(user.getName());
+        holder.textName.setText(user.getFullName());
         holder.textUsername.setText(user.getUsername());
         holder.layoutItem.setOnClickListener(v -> goToChat(user));
     }
@@ -50,7 +50,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserCh
     private void goToChat(UserChat user) {
         Intent intent = new Intent(context, ChatActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("object_user_from_main", user);
+        bundle.putSerializable("object_user", user);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }

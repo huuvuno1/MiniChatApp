@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.vuhung.minichatapp.R;
 import com.vuhung.minichatapp.adapters.UserChatAdapter;
 import com.vuhung.minichatapp.api.ApiService;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtName;
     private RecyclerView recyclerView;
     private UserChatAdapter userChatAdapter;
-
+    List<UserChat> userChats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getView();
         setListeners();
-        startSocket();
+
         //fillData();
 
         // nham vi tri -> chuyen qua chat -> doi ten bundle key
@@ -55,15 +57,15 @@ public class MainActivity extends AppCompatActivity {
 //        if (bundle == null)
 //            return;
 //        User user = (User) bundle.get("object_user");
-        List<UserChat> userChats = new ArrayList<>();
-        userChats.add(new UserChat("", "Nguyen Huu Vu", "Vu", "hu hu"));
-        userChats.add(new UserChat("", "Nguyen Huu Vu", "Vu", "hu hu"));
+        userChats = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(this, userChats);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(userChatAdapter);
         userChatAdapter.notifyDataSetChanged();
         recyclerView.scrollToPosition(userChats.size() - 1);
+
+        startSocket();
     }
 
     private void startSocket() {
@@ -71,11 +73,26 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
         String token = preferences.getString("token", "");
         MySocket.start(token);
-        MySocket.getInstanceSocket().on("my_info", data -> {
+        Socket socket = MySocket.getInstanceSocket();
+        socket.on("my_info", data -> {
+            if (data[0] == null || "null".equals(data[0]))
+                return;
             User user = new Gson().fromJson(data[0].toString(), User.class);
             Constant.MY_USERNAME = user.getUsername();
             this.runOnUiThread(() -> {
                 this.txtName.setText(user.getFullName());
+            });
+        });
+
+        socket.emit("fetch_user_chat");
+
+        socket.on("fetch_user_chat", data -> {
+            if (data[0] == null || "null".equals(data[0]))
+                return;
+            List<UserChat> users = new Gson().fromJson(data[0].toString(), new TypeToken<List<UserChat>>(){}.getType());
+            runOnUiThread(() -> {
+                userChats.addAll(users);
+                this.userChatAdapter.notifyDataSetChanged();
             });
         });
     }

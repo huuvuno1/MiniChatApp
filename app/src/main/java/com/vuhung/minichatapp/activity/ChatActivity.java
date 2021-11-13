@@ -58,12 +58,12 @@ public class ChatActivity extends AppCompatActivity {
         }
         partner = (User) bundle.get("object_user");
 
-        if (partner == null) {
-            UserChat userChat = (UserChat) bundle.get("object_user_from_main");
-            partner = new User();
-            partner.setUsername(userChat.getUsername());
-            partner.setFullName(userChat.getName());
-        }
+//        if (partner == null) {
+//            UserChat userChat = (UserChat) bundle.get("object_user_from_main");
+//            partner = new User();
+//            partner.setUsername(userChat.getUsername());
+//            partner.setFullName(userChat.getName());
+//        }
 
         TextView txtNameChat = findViewById(R.id.textNameChat);
         txtNameChat.setText(partner.getFullName());
