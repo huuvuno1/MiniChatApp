@@ -138,18 +138,25 @@ module.exports = {
                 let mess = {
                     sender: socket.username,
                     content: data.content, 
-                    timestamp: Date.now()
+                    timestamp: Date.now(),
+                    username: socket.username
                 }
                 chat.messages.push(mess)
                 console.log("chat", chat)
                 await new Chat(chat).save()
+
+                // push notification
+                utils.pushNotification(socket.username, data.receiver, data.content)
 
                 // send to partner
                 let ids = userOnline.get(data.receiver)
                 if (!ids) return
                 ids.forEach(idSocket => {
                     io.to(idSocket).emit('receive_message', JSON.stringify(mess))
+                    io.to(idSocket).emit('update_content_user_chat', JSON.stringify(mess))
                 })
+                
+                
             })
             
 
