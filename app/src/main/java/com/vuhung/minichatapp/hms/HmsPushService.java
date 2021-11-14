@@ -21,6 +21,12 @@ public class HmsPushService extends HmsMessageService {
     static Integer test = 1;
 
     @Override
+    public void onNewToken(String s) {
+        Log.e("newtoken", s);
+        super.onNewToken(s);
+    }
+
+    @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Log.e("received", "oke em " + remoteMessage.getData());

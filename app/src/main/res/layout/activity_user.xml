@@ -48,6 +48,8 @@
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/_8sdp"
             android:hint="Search..."
+            android:imeOptions="actionGo"
+            android:importantForAutofill="no"
             android:textColor="@color/white"
             android:textSize="@dimen/_16ssp"
             android:textColorHint="@color/white"

@@ -131,6 +131,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (partner.getUsername().equals(message.getSender())) {
                     mListMessage.add(message);
                     messageAdapter.notifyDataSetChanged();
+                    rcvMessage.scrollToPosition(mListMessage.size() - 1);
                 }
             });
         });

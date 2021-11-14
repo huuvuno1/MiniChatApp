@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.socket.client.Socket;
 import retrofit2.Call;
@@ -61,11 +63,20 @@ public class MainActivity extends AppCompatActivity {
         userChatAdapter = new UserChatAdapter(this, userChats);
 //        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 //        recyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(userChatAdapter);
         userChatAdapter.notifyDataSetChanged();
         recyclerView.scrollToPosition(userChats.size() - 1);
 
         startSocket();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        userChats.clear();
+        MySocket.getInstanceSocket().emit("fetch_user_chat");
     }
 
     private void startSocket() {
@@ -84,14 +95,25 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
-        socket.emit("fetch_user_chat");
-
         socket.on("fetch_user_chat", data -> {
             if (data[0] == null || "null".equals(data[0]))
                 return;
             List<UserChat> users = new Gson().fromJson(data[0].toString(), new TypeToken<List<UserChat>>(){}.getType());
             runOnUiThread(() -> {
                 userChats.addAll(users);
+                this.userChatAdapter.notifyDataSetChanged();
+            });
+        });
+
+        socket.on("update_content_user_chat", data -> {
+            if (data[0] == null || "null".equals(data[0]))
+                return;
+            UserChat user = new Gson().fromJson(data[0].toString(), UserChat.class);
+            runOnUiThread(() -> {
+                userChats.forEach(u -> {
+                    if (u.getUsername().equals(user.getUsername()))
+                        u.setContent(user.getContent());
+                });
                 this.userChatAdapter.notifyDataSetChanged();
             });
         });
@@ -104,31 +126,31 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.userChatHistoryRecyclerView);
     }
 
-    private void fillData() {
-        SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
-        String full_name = preferences.getString("full_name", "");
-        if ("".equals(full_name)) {
-            String token = preferences.getString("token", "");
-            Map<String, String> body = new HashMap<>();
-            body.put("token", token);
-            ApiService.apiService.fetchProfile(body).enqueue(new Callback<BaseResponse<User>>() {
-                @Override
-                public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
-                    String name = response.body().getData().getFullName();
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("full_name", name).commit();
-                    txtName.setText(name);
-                }
-
-                @Override
-                public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
-                    Log.e(TAG, "fetch profile api not call");
-                }
-            });
-        }
-        else
-            txtName.setText(full_name);
-    }
+//    private void fillData() {
+//        SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
+//        String full_name = preferences.getString("full_name", "");
+//        if ("".equals(full_name)) {
+//            String token = preferences.getString("token", "");
+//            Map<String, String> body = new HashMap<>();
+//            body.put("token", token);
+//            ApiService.apiService.fetchProfile(body).enqueue(new Callback<BaseResponse<User>>() {
+//                @Override
+//                public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
+//                    String name = response.body().getData().getFullName();
+//                    SharedPreferences.Editor editor = preferences.edit();
+//                    editor.putString("full_name", name).commit();
+//                    txtName.setText(name);
+//                }
+//
+//                @Override
+//                public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
+//                    Log.e(TAG, "fetch profile api not call");
+//                }
+//            });
+//        }
+//        else
+//            txtName.setText(full_name);
+//    }
 
     private void setListeners() {
         signOut.setOnClickListener(v-> {
@@ -146,7 +168,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void sendRegTokenToServer(String token) {
-        Log.i(TAG, "sending token to server. token:" + token);
-    }
 }
