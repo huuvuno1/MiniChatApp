@@ -15,6 +15,15 @@ public class User implements Serializable {
     private String address;
     private int resourceId;
     private String avatar;
+    private boolean online;
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
     public String getAvatar() {
         return avatar;

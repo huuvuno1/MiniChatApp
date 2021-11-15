@@ -1,9 +1,13 @@
 package com.vuhung.minichatapp.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
-public class UserChat extends User implements Serializable {
+import java.util.Date;
+
+public class UserChat extends User {
     private String content;
+    @SerializedName("timestamp")
+    private Date timeStamp;
 
     public UserChat() {
     }
@@ -21,5 +25,13 @@ public class UserChat extends User implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

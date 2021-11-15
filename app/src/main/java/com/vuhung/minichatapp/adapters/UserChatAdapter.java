@@ -44,6 +44,10 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserCh
         holder.textChat.setText(user.getContent());
         holder.textName.setText(user.getFullName());
         holder.textUsername.setText(user.getUsername());
+        if (users.get(position).isOnline())
+            holder.status.setVisibility(View.VISIBLE);
+        else
+            holder.status.setVisibility(View.GONE);
         holder.layoutItem.setOnClickListener(v -> goToChat(user));
     }
 
@@ -62,7 +66,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserCh
 
     public class UserChatViewHolder extends RecyclerView.ViewHolder {
         ConstraintLayout layoutItem;
-        ImageView imageProfile;
+        ImageView imageProfile, status;
         TextView textName, textChat, textUsername;
 
         public UserChatViewHolder(@NonNull View itemView) {
@@ -72,6 +76,7 @@ public class UserChatAdapter extends RecyclerView.Adapter<UserChatAdapter.UserCh
             textName = itemView.findViewById(R.id.textName);
             textUsername = itemView.findViewById(R.id.text_username_hidden);
             textChat = itemView.findViewById(R.id.textChat);
+            status = itemView.findViewById(R.id.status);
         }
     }
 }

@@ -65,12 +65,19 @@ public class UserActivity extends AppCompatActivity {
                 this.usersAdapter.notifyDataSetChanged();
             });
         });
-//        try {
-//            Thread.sleep(300);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        usersAdapter.notifyDataSetChanged();
+
+        socket.on("status_user", data -> {
+            if (data[0] == null || "null".equals(data[0]))
+                return;
+            User user = new Gson().fromJson(data[0].toString(), User.class);
+            list.forEach(u -> {
+                if (u.getUsername().equals(user.getUsername()))
+                    u.setOnline(user.isOnline());
+            });
+            this.runOnUiThread(() -> {
+                this.usersAdapter.notifyDataSetChanged();
+            });
+        });
     }
 
 

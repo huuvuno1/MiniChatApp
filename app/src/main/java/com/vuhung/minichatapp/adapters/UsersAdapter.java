@@ -47,7 +47,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         holder.textName.setText(user.getFullName());
         holder.textEmail.setText(user.getEmail());
         holder.textUsername.setText(user.getUsername());
-
+        if (mListUser.get(position).isOnline())
+            holder.status.setVisibility(View.VISIBLE);
+        else
+            holder.status.setVisibility(View.GONE);
         holder.layoutItem.setOnClickListener(view -> onClickGoToDetail(user));
     }
 
@@ -72,7 +75,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     public class UserViewHolder extends RecyclerView.ViewHolder {
 
         private ConstraintLayout layoutItem;
-        private ImageView imageProfile;
+        private ImageView imageProfile, status;
         private TextView textName, textEmail, textUsername;
 
         public UserViewHolder(@NonNull View itemView) {
@@ -82,6 +85,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             textEmail = itemView.findViewById(R.id.textEmail);
             textUsername = itemView.findViewById(R.id.text_username_hidden);
             layoutItem = itemView.findViewById(R.id.layout_item1);
+            status = itemView.findViewById(R.id.status);
         }
     }
 }

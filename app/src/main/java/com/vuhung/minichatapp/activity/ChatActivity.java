@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,11 +27,13 @@ import com.vuhung.minichatapp.utils.Constant;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import io.socket.client.Socket;
+import pl.droidsonroids.gif.GifImageView;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -40,16 +43,14 @@ public class ChatActivity extends AppCompatActivity {
     private AppCompatImageView btnBack;
     private MessageAdapter messageAdapter;
     private List<Message> mListMessage;
+    private GifImageView gifTyping;
     private User partner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        //Anh xa View
-        edtMessage = findViewById(R.id.inputMessage);
-        btnSend = findViewById(R.id.buttonSend);
-        rcvMessage = findViewById(R.id.chatRecyclerView);
-        btnBack = findViewById(R.id.imageBack);
+
+        getViews();
 
         //lấy dữ liệu từ userAdapter
         Bundle bundle = getIntent().getExtras();
@@ -57,13 +58,6 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         partner = (User) bundle.get("object_user");
-
-//        if (partner == null) {
-//            UserChat userChat = (UserChat) bundle.get("object_user_from_main");
-//            partner = new User();
-//            partner.setUsername(userChat.getUsername());
-//            partner.setFullName(userChat.getName());
-//        }
 
         TextView txtNameChat = findViewById(R.id.textNameChat);
         txtNameChat.setText(partner.getFullName());
@@ -88,11 +82,20 @@ public class ChatActivity extends AppCompatActivity {
         setListeners();
     }
 
+    private void getViews() {
+        //Anh xa View
+        edtMessage = findViewById(R.id.inputMessage);
+        btnSend = findViewById(R.id.buttonSend);
+        rcvMessage = findViewById(R.id.chatRecyclerView);
+        btnBack = findViewById(R.id.imageBack);
+        gifTyping = findViewById(R.id.typing);
+    }
+
     private void bindDataFromSocket(String usernameFriend) {
         Socket socket = MySocket.getInstanceSocket();
         socket.emit("fetch_chat_history", usernameFriend);
         socket.on("fetch_chat_history", data -> {
-            if ("null".equals(data[0]))
+            if (data == null || "null".equals(data[0]))
                 return;
            ChatHistory chatHistory = new Gson().fromJson(data[0].toString(), ChatHistory.class);
            mListMessage.addAll(chatHistory.getMessages());
@@ -100,6 +103,17 @@ public class ChatActivity extends AppCompatActivity {
                this.messageAdapter.notifyDataSetChanged();
                this.rcvMessage.scrollToPosition(mListMessage.size()-1);
            });
+        });
+
+        socket.on("on_typing", data -> {
+            if (data == null || "null".equals(data[0]))
+                return;
+            Map<String, String> body = new Gson().fromJson(data[0].toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+            if (partner.getUsername().equals(body.get("sender")) && "true".equals(body.get("typing"))) {
+                gifTyping.setVisibility(View.VISIBLE);
+            }
+            else
+                gifTyping.setVisibility(View.GONE);
         });
     }
 
@@ -120,6 +134,11 @@ public class ChatActivity extends AppCompatActivity {
         // send to server
         Socket socket = MySocket.getInstanceSocket();
         socket.emit("send_chat", new Gson().toJson(message));
+
+        Map<String, String> body = new HashMap<>();
+        body.put("receiver", partner.getUsername());
+        body.put("typing", "false");
+        socket.emit("on_typing", new Gson().toJson(body));
     }
 
     private void setListeners() {
@@ -135,7 +154,28 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
         });
-        btnBack.setOnClickListener(view -> onBackPressed());
+
+        Map<String, String> body = new HashMap<>();
+        body.put("receiver", partner.getUsername());
+
+
+        // event for back
+        btnBack.setOnClickListener(view -> {
+            body.put("typing", "false");
+            MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
+            onBackPressed();
+        });
+
+        // event typing
+        edtMessage.setOnKeyListener((view, b, c) -> {
+            Log.e("lskadjfsadf", "ok");
+            if (edtMessage.getText().toString().equals(""))
+                body.put("typing", "false");
+            else
+                body.put("typing", "true");
+            MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
+            return true;
+        });
     }
 
     private String getReadableDateTime(Date date) {

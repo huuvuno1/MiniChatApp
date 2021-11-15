@@ -20,6 +20,7 @@
         android:layout_height="@dimen/_35sdp"
         android:background="@drawable/background_image"
         android:scaleType="centerCrop"
+        android:src="@drawable/icon_user"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:riv_oval="true" />
@@ -60,4 +61,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageProfile"
         app:layout_constraintTop_toBottomOf="@id/viewSupporter"/>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/status"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="@dimen/_10sdp"
+        android:scaleType="centerCrop"
+        android:layout_marginEnd="@dimen/_25sdp"
+        android:src="@drawable/bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:riv_oval="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:visibility="gone"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
