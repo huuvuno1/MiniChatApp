@@ -38,6 +38,8 @@ public class DeviceTokenUtil {
                     // Check whether the token is empty.
                     if(!TextUtils.isEmpty(deviceToken)) {
                         SharedPreferences preferences = context.getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, Context.MODE_PRIVATE);
+                        preferences.edit().putString("device_token", deviceToken).commit();
+
                         String jwtToken = preferences.getString("token", "");
                         Map<String, String> body = new HashMap<>();
                         body.put("jwt_token", jwtToken);

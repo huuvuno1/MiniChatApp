@@ -53,16 +53,10 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
 
         //fillData();
-
-        // nham vi tri -> chuyen qua chat -> doi ten bundle key
-//        Bundle bundle = getIntent().getExtras();
-//        if (bundle == null)
-//            return;
-//        User user = (User) bundle.get("object_user");
         userChats = new ArrayList<>();
         userChatAdapter = new UserChatAdapter(this, userChats);
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(linearLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(linearLayoutManager);
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(itemDecoration);
         recyclerView.setAdapter(userChatAdapter);
@@ -157,7 +151,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             // clear old data
             SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
+            String deviceToken = preferences.getString("device_token", "");
             preferences.edit().clear().commit();
+
+            if (!"".equals(deviceToken))
+                MySocket.getInstanceSocket().emit("logout", deviceToken);
+
             MySocket.stop();
             startActivity(intent);
             finish();
