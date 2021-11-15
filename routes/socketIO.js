@@ -13,6 +13,31 @@ module.exports = {
         io.on('connection', (socket) => {
             console.log('have a user connect + ' + socket.id);
 
+
+            socket.on('auth_when_start', async jwtToken => {
+                let username = await utils.getUsernameFromToken(jwtToken)
+                //console.log("authen", username)
+                if (username) {
+                    const user = await User.findOne({
+                        "$or":  [
+                            { "email": username },
+                            { "phonenumber": username },
+                            { "username": username }
+                        ]
+                    })
+                    
+                    if (user) {
+                        //console.log(JSON.stringify(user))
+                        if (user.fullname)
+                            io.to(`${socket.id}`).emit("auth_when_start", "OK");
+                        else
+                            io.to(`${socket.id}`).emit("auth_when_start", "MISSING_NAME");
+                    }
+                }
+                else
+                    io.to(`${socket.id}`).emit("auth_when_start", "FAIL");
+            })
+
             socket.on('register', async jwtToken => {
                 let username = await utils.getUsernameFromToken(jwtToken)
                 if (username) {
@@ -20,6 +45,13 @@ module.exports = {
                         'username': username
                     })
                     if (user) {
+                        // save status for user
+                        user.online = true;
+                        await new User(user).save()
+
+                        // emit all users
+                        io.emit('status_user', JSON.stringify(user))
+
                         console.log("user info", user.fullname)
                         user.password = ''
                         io.to(`${socket.id}`).emit('my_info', JSON.stringify(user))
@@ -35,6 +67,8 @@ module.exports = {
                             ids.add(socket.id)
                             userOnline.set(username, ids)
                         }
+
+                        //
                     }
                     else {
                         socket.disconnect()
@@ -49,22 +83,15 @@ module.exports = {
             // fetch all user, data not required
             socket.on('fetch_all_user', async () => {
                 const users = await User.find()
-                if (users) {
-                    users.map(u => {
-                        u._id = ''
-                        u.password = ''
-                        u.verify = ''
-                        return u
-                    })
-                }
+                // if (users) {
+                //     users.map(u => {
+                //         u._id = ''
+                //         u.password = ''
+                //         u.verify = ''
+                //         return u
+                //     })
+                // }
                 console.log("response fetch", JSON.stringify(users))
-                // const ids = userOnline.get(socket.username)
-                // if (!ids)
-                //     return;
-                // ids.forEach(id => {
-                //     io.to(id).emit('fetch_all_user', JSON.stringify(users))
-                // })
-                //io.emit('fetch_all_user', JSON.stringify(user))
                 io.to(`${socket.id}`).emit('fetch_all_user', JSON.stringify(users))
             })
 
@@ -82,7 +109,8 @@ module.exports = {
                 chats.forEach(chat => {
                     const partner_username = chat.members[0] == socket.username ? chat.members[1] : chat.members[0]
                     const user = users.filter(u => u.username == partner_username)[0]
-                    const user_r = {...user._doc, content: chat.messages.pop().content}
+                    const lastestMessage = chat.messages.pop()
+                    const user_r = {...user._doc, content: lastestMessage.content, timestamp: lastestMessage.timestamp}
                    // user.content = 
                     console.log("user detail chat", user)
                     result.push(user_r)
@@ -135,11 +163,18 @@ module.exports = {
                         messages: []
                     }
                 }
+
+                // get info usersend
+                const uSend = await User.findOne({
+                    'username': socket.username
+                })
+
                 let mess = {
                     sender: socket.username,
                     content: data.content, 
-                    timestamp: Date.now(),
-                    username: socket.username
+                    timestamp: new Date(),
+                    username: socket.username,
+                    fullname: uSend.fullname
                 }
                 chat.messages.push(mess)
                 console.log("chat", chat)
@@ -160,8 +195,19 @@ module.exports = {
             })
             
 
-            socket.on('user', data => {
+            socket.on('on_typing', data => {
                 console.log(data)
+                data = JSON.parse(data)
+                const ids = userOnline.get(data.receiver)
+                if (ids) {
+                    ids.forEach(id => {
+                        io.to(id).emit('on_typing', JSON.stringify({
+                            'sender': socket.username,
+                            'typing': data.typing
+                        }))
+                    })
+                }
+                
             })
 
             // disconnect: remove id from userOnline - remove token device
@@ -172,6 +218,16 @@ module.exports = {
                     ids.delete(socket.id)
                     if (ids.size == 0)
                         userOnline.delete(socket.username)
+                }
+                const user = await User.findOne({
+                    'username': socket.username
+                })
+
+                if (user) {
+                    user.online = false
+                    await new User(user).save()
+                    io.emit('status_user', JSON.stringify(user))
+                    console.log("disconnect", user)
                 }
 
                 console.log("user then disconnect", userOnline)

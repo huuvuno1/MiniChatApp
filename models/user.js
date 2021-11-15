@@ -31,6 +31,9 @@ let user = new Schema(
       expires: {
         type: Date, default: new Date(Date.now() + 60*60*8*1000)
       }
+    },
+    online: {
+      type: Boolean, default: false
     }
   },
   { collection: "user" }
