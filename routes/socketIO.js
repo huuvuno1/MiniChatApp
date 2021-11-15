@@ -2,7 +2,7 @@
 const utils = require('../utils/custom')
 const User = require('../models/user');
 const Chat = require('../models/chat');
-const user = require('../models/user');
+const Device = require('../models/device');
 const userOnline = new Map();
 // {
 //     "username_value" => ["id_socket_1", "id2_socket_2"],
@@ -164,8 +164,8 @@ module.exports = {
                 console.log(data)
             })
 
-            // disconnect: remove id from userOnline
-            socket.on('disconnect', () => {
+            // disconnect: remove id from userOnline - remove token device
+            socket.on('disconnect', async () => {
                 console.log("user " + socket.id + " disconnect")
                 let ids = userOnline.get(socket.username)
                 if (ids) {
@@ -173,7 +173,24 @@ module.exports = {
                     if (ids.size == 0)
                         userOnline.delete(socket.username)
                 }
+
                 console.log("user then disconnect", userOnline)
+            })
+
+            socket.on('logout', async deviceToken => {
+                const device = await Device.findOne({
+                    'username': socket.username
+                })
+
+                console.log("logout: ", device, deviceToken)
+            
+                if (device) {
+                    let i = device.tokens.indexOf(deviceToken)
+                    if (i >= 0)
+                        device.tokens.splice(i, 1)
+                }
+
+                await new Device(device).save()
             })
         })
     }
