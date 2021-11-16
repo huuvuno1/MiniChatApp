@@ -102,7 +102,7 @@ module.exports = {
       "body": JSON.stringify({
         "validate_only": false,
         "message": {
-            "data": `{'title':'${userSend.fullname}','body':'${message}'}`,
+            "data": `{'fullname':'${userSend.fullname}','content':'${message}', 'username': '${sender}'}`,
             "token": device.tokens
         }
     }),

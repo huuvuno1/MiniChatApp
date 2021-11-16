@@ -16,7 +16,7 @@ module.exports = {
 
             socket.on('auth_when_start', async jwtToken => {
                 let username = await utils.getUsernameFromToken(jwtToken)
-                //console.log("authen", username)
+                ////console.log("authen", username)
                 if (username) {
                     const user = await User.findOne({
                         "$or":  [
@@ -27,7 +27,7 @@ module.exports = {
                     })
                     
                     if (user) {
-                        //console.log(JSON.stringify(user))
+                        ////console.log(JSON.stringify(user))
                         if (user.fullname)
                             io.to(`${socket.id}`).emit("auth_when_start", "OK");
                         else
@@ -52,12 +52,12 @@ module.exports = {
                         // emit all users
                         io.emit('status_user', JSON.stringify(user))
 
-                        console.log("user info", user.fullname)
+                        //console.log("user info", user.fullname)
                         user.password = ''
                         io.to(`${socket.id}`).emit('my_info', JSON.stringify(user))
 
                         socket.username = username
-                        console.log('username', socket.username, username)
+                        //console.log('username', socket.username, username)
                         let ids = userOnline.get(username)
                         if (ids) {
                             ids.add(socket.id)
@@ -91,7 +91,7 @@ module.exports = {
                 //         return u
                 //     })
                 // }
-                console.log("response fetch", JSON.stringify(users))
+                //console.log("response fetch", JSON.stringify(users))
                 io.to(`${socket.id}`).emit('fetch_all_user', JSON.stringify(users))
             })
 
@@ -104,7 +104,7 @@ module.exports = {
                 })
                 
                 const users = await User.find()
-                // console.log("chat user", chats, socket.username)
+                // //console.log("chat user", chats, socket.username)
                 const result = []
                 chats.forEach(chat => {
                     const partner_username = chat.members[0] == socket.username ? chat.members[1] : chat.members[0]
@@ -112,19 +112,19 @@ module.exports = {
                     const lastestMessage = chat.messages.pop()
                     const user_r = {...user._doc, content: lastestMessage.content, timestamp: lastestMessage.timestamp}
                    // user.content = 
-                    console.log("user detail chat", user)
+                    //console.log("user detail chat", user)
                     result.push(user_r)
                 })
                 
 
-                // console.log("fetch user chat from main", result)
+                // //console.log("fetch user chat from main", result)
                 io.to(`${socket.id}`).emit('fetch_user_chat', JSON.stringify(result))
 
             })
 
             // fetch all message
             socket.on('fetch_chat_history', async usernameFriend => {
-                console.log('fetch chat with user: ', usernameFriend)
+                //console.log('fetch chat with user: ', usernameFriend)
                 let chat = await Chat.findOne({
                     'members': [socket.username, usernameFriend]
                 })
@@ -141,14 +141,25 @@ module.exports = {
                 //     }
                 // })
 
-                console.log("fetch chat list: ", chat)
+                //console.log("fetch chat list: ", chat)
                 io.to(`${socket.id}`).emit('fetch_chat_history', JSON.stringify(chat))
             })
 
+            // search
+            socket.on('search_user', async key => {
+                const users = await User.find({
+                    "$or": [
+                        {'fullname': {"$regex" : key}},
+                        {'email': key}
+                    ]
+                })
+                //console.log("search", users)
+                io.to(`${socket.id}`).emit('search_user', JSON.stringify(users))
+            })
 
             socket.on('send_chat', async data => {
                 data = JSON.parse(data)
-                // console.log(data)
+                // //console.log(data)
                 let chat = await Chat.findOne({
                     'members': [socket.username, data.receiver]
                 })
@@ -177,7 +188,7 @@ module.exports = {
                     fullname: uSend.fullname
                 }
                 chat.messages.push(mess)
-                console.log("chat", chat)
+                //console.log("chat", chat)
                 await new Chat(chat).save()
 
                 // push notification
@@ -196,7 +207,7 @@ module.exports = {
             
 
             socket.on('on_typing', data => {
-                console.log(data)
+                //console.log(data)
                 data = JSON.parse(data)
                 const ids = userOnline.get(data.receiver)
                 if (ids) {
@@ -212,7 +223,7 @@ module.exports = {
 
             // disconnect: remove id from userOnline - remove token device
             socket.on('disconnect', async () => {
-                console.log("user " + socket.id + " disconnect")
+                //console.log("user " + socket.id + " disconnect")
                 let ids = userOnline.get(socket.username)
                 if (ids) {
                     ids.delete(socket.id)
@@ -227,7 +238,7 @@ module.exports = {
                     user.online = false
                     await new User(user).save()
                     io.emit('status_user', JSON.stringify(user))
-                    console.log("disconnect", user)
+                    //console.log("disconnect", user)
                 }
 
                 console.log("user then disconnect", userOnline)
@@ -238,7 +249,7 @@ module.exports = {
                     'username': socket.username
                 })
 
-                console.log("logout: ", device, deviceToken)
+                //console.log("logout: ", device, deviceToken)
             
                 if (device) {
                     let i = device.tokens.indexOf(deviceToken)

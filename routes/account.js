@@ -39,7 +39,8 @@ router.post('/api/v1/login-token-huawei', async (req, resp) => {
         const token = await utils.genateToken(data.openID)
         if (!user) {
             const uMongo = new User({
-                username: data.openID
+                username: data.openID,
+                email: 'Account Huawei'
             })
             await uMongo.save()
             return resp.status(200).json({
