@@ -1,17 +1,19 @@
 package com.vuhung.minichatapp.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,7 +22,6 @@ import com.vuhung.minichatapp.adapters.MessageAdapter;
 import com.vuhung.minichatapp.model.ChatHistory;
 import com.vuhung.minichatapp.model.Message;
 import com.vuhung.minichatapp.model.User;
-import com.vuhung.minichatapp.model.UserChat;
 import com.vuhung.minichatapp.socket.MySocket;
 import com.vuhung.minichatapp.utils.Constant;
 
@@ -54,6 +55,7 @@ public class ChatActivity extends AppCompatActivity {
 
         //lấy dữ liệu từ userAdapter
         Bundle bundle = getIntent().getExtras();
+        Log.e("lsdfjsldkfjsdlk", "noi " + bundle);
         if(bundle == null) {
             return;
         }
@@ -69,8 +71,9 @@ public class ChatActivity extends AppCompatActivity {
         mListMessage = new ArrayList<>();
         messageAdapter = new MessageAdapter();
         messageAdapter.setData(mListMessage);
-
         rcvMessage.setAdapter(messageAdapter);
+
+        // get data
         bindDataFromSocket(partner.getUsername());
 
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +95,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void bindDataFromSocket(String usernameFriend) {
+        // start app from notification
+        if (Constant.MY_USERNAME.equals("")) {
+            String token = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE).getString("token", "");
+            MySocket.start(token);
+        }
+
         Socket socket = MySocket.getInstanceSocket();
         socket.emit("fetch_chat_history", usernameFriend);
         socket.on("fetch_chat_history", data -> {
@@ -110,10 +119,15 @@ public class ChatActivity extends AppCompatActivity {
                 return;
             Map<String, String> body = new Gson().fromJson(data[0].toString(), new TypeToken<HashMap<String, String>>(){}.getType());
             if (partner.getUsername().equals(body.get("sender")) && "true".equals(body.get("typing"))) {
-                gifTyping.setVisibility(View.VISIBLE);
+                this.runOnUiThread(() -> {
+                    gifTyping.setVisibility(View.VISIBLE);
+                    rcvMessage.scrollToPosition(mListMessage.size() - 1);
+                });
             }
             else
-                gifTyping.setVisibility(View.GONE);
+                this.runOnUiThread(() -> {
+                    gifTyping.setVisibility(View.GONE);
+                });
         });
     }
 
@@ -163,18 +177,31 @@ public class ChatActivity extends AppCompatActivity {
         btnBack.setOnClickListener(view -> {
             body.put("typing", "false");
             MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
-            onBackPressed();
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
         });
 
         // event typing
-        edtMessage.setOnKeyListener((view, b, c) -> {
-            Log.e("lskadjfsadf", "ok");
-            if (edtMessage.getText().toString().equals(""))
-                body.put("typing", "false");
-            else
-                body.put("typing", "true");
-            MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
-            return true;
+        edtMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Log.e("sdlfkajflksadj", "typing: " + editable.toString());
+                if (edtMessage.getText().toString().equals(""))
+                    body.put("typing", "false");
+                else
+                    body.put("typing", "true");
+                MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
+            }
         });
     }
 

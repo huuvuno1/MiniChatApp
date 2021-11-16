@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        userChats.clear();
         MySocket.getInstanceSocket().emit("fetch_user_chat");
     }
 
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         String token = preferences.getString("token", "");
         MySocket.start(token);
         Socket socket = MySocket.getInstanceSocket();
+
         socket.on("my_info", data -> {
             if (data[0] == null || "null".equals(data[0]))
                 return;
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             if (data[0] == null || "null".equals(data[0]))
                 return;
             List<UserChat> users = new Gson().fromJson(data[0].toString(), new TypeToken<List<UserChat>>(){}.getType());
+            userChats.clear();
             userChats.addAll(users);
             userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);
             runOnUiThread(() -> {

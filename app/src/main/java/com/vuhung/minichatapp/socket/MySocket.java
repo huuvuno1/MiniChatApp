@@ -17,7 +17,6 @@ import io.socket.emitter.Emitter;
 
 public class MySocket {
     private static Socket instance;
-    private static boolean isListening = false;
     private MySocket() {}
 
      public static Socket getInstanceSocket() {
@@ -38,50 +37,14 @@ public class MySocket {
 
     public static void start(String jwtToken) {
         Socket socket = MySocket.getInstanceSocket();
-        if (socket != null && !isListening) {
+        if (socket != null) {
             socket.emit("register", jwtToken);
-            doListen();
-            isListening = true;
         }
-    }
-
-    private static void doListen() {
-
-        instance.on("message_to", data -> {
-            System.out.println("Co tin nhan gui den");
-            /*
-                check tab tin nhắn đang mở
-                    - nếu đúng user đó thì render
-                    - ngược lại push notification
-             */
-
-        });
-
-        instance.on("typing", data -> {
-            System.out.println("dang typing");
-            /*
-                nếu đang nhắn đúng user đó thì hiển thị typing
-             */
-        });
-
-        instance.on("user_status", data -> {
-            System.out.println("on status");
-            // update lại list user
-        });
-    }
-
-    public static void fetchAllUsers() {
-//        instance.on("fetch_all_user", data -> {
-//            Log.e("test", data[0].toString());
-//            Gson gson = new Gson();
-//            List<User> users = gson.fromJson(data[0].toString(), new TypeToken<List<User>>(){}.getType());
-//        });
     }
 
     public static void stop() {
         if (instance != null) {
             instance.disconnect();
-            isListening = false;
             instance = null;
         }
     }

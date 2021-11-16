@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,6 +31,7 @@ public class UserActivity extends AppCompatActivity {
     private AppCompatImageView imageView;
     private RecyclerView rcvData;
     private UsersAdapter usersAdapter;
+    private EditText inputSearch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +55,7 @@ public class UserActivity extends AppCompatActivity {
     private void getView() {
         imageView = findViewById(R.id.imageBack1);
         rcvData = findViewById(R.id.usersRecyclerView);
+        inputSearch = findViewById(R.id.txtSearch);
     }
 
     private void getListUser() {
@@ -78,11 +83,39 @@ public class UserActivity extends AppCompatActivity {
                 this.usersAdapter.notifyDataSetChanged();
             });
         });
+
+        socket.on("search_user", data -> {
+            if (data[0] == null || "null".equals(data[0]))
+                return;
+            List<User> users = new Gson().fromJson(data[0].toString(), new TypeToken<List<User>>(){}.getType());
+            list.clear();
+            list.addAll(users);
+            this.runOnUiThread(() -> {
+                usersAdapter.notifyDataSetChanged();
+            });
+        });
     }
 
 
     private void setListeners() {
         imageView.setOnClickListener(view -> onBackPressed());
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Socket socket = MySocket.getInstanceSocket();
+                socket.emit("search_user", inputSearch.getText().toString());
+            }
+        });
     }
 
     @Override
