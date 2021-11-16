@@ -84,12 +84,13 @@ public class StartActivity extends AppCompatActivity {
                     else {
                         startActivity(new Intent(StartActivity.this, LoginActivity.class));
                     }
+                    finish();
                 });
             }
             else {
                 startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                finish();
             }
-            finish();
         }, 1000);
     }
 }
