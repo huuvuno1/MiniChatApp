@@ -185,7 +185,8 @@ module.exports = {
                     content: data.content, 
                     timestamp: new Date(),
                     username: socket.username,
-                    fullname: uSend.fullname
+                    fullname: uSend.fullname,
+                    online: uSend.online
                 }
                 chat.messages.push(mess)
                 //console.log("chat", chat)
