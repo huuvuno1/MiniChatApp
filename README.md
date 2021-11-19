@@ -1,3 +1,2 @@
 # MiniChatApp
-Vjp pro
-sịn
+Ứng dụng chat đơn giản
