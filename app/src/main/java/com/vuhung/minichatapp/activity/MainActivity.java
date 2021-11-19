@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             });
         });
 
+
         socket.on("fetch_user_chat", data -> {
             if (data[0] == null || "null".equals(data[0]))
                 return;
@@ -111,16 +113,17 @@ public class MainActivity extends AppCompatActivity {
                     isExist = true;
                     u.setContent(user.getContent());
                     u.setTimeStamp(user.getTimeStamp());
+                    u.setOnline(user.isOnline());
                     break;
                 }
             }
             if (!isExist) {
-                UserChat u = new UserChat();
-                u.setFullName(user.getFullName());
-                u.setUsername(user.getUsername());
-                u.setContent(user.getContent());
-                u.setTimeStamp(user.getTimeStamp());
-                userChats.add(0, u);
+//                UserChat u = new UserChat();
+//                u.setFullName(user.getFullName());
+//                u.setUsername(user.getUsername());
+//                u.setContent(user.getContent());
+//                u.setTimeStamp(user.getTimeStamp());
+                userChats.add(0, user);
             }
 
             userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);

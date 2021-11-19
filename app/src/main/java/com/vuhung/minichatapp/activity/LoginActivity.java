@@ -87,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             // validate
             if (email.length() < 5 || password.length() < 5) {
                 textMessage.setVisibility(View.VISIBLE);
+                textMessage.setTextColor(Color.RED);
                 textMessage.setText("Wrong email or password");
                 return;
             }
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     signIn.setEnabled(true);
                     if (response.getStatus() == 200) {
                         // save token
-                        SharedPreferences preferences = getBaseContext().getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
+                        SharedPreferences preferences = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("token", response.getData());
                         editor.commit();

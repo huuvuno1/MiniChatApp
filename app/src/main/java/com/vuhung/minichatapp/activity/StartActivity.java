@@ -91,6 +91,7 @@ public class StartActivity extends AppCompatActivity {
                 startActivity(new Intent(StartActivity.this, LoginActivity.class));
                 finish();
             }
+
         }, 1000);
     }
 }

@@ -1,19 +1,11 @@
 package com.vuhung.minichatapp.socket;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.vuhung.minichatapp.activity.UserActivity;
-import com.vuhung.minichatapp.model.User;
 import com.vuhung.minichatapp.utils.Constant;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 public class MySocket {
     private static Socket instance;
@@ -32,7 +24,7 @@ public class MySocket {
                 }
             }
         }
-        return instance;
+        return instance; // singleton design pattern
     }
 
     public static void start(String jwtToken) {
