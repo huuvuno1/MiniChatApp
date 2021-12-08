@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -69,6 +70,7 @@ public class StartActivity extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             SharedPreferences preferences = getBaseContext().getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE);
             String token = preferences.getString("token", "");
+            Log.e("abcssd", token);
             if (!"".equals(token)) {
                 Socket socket = MySocket.getInstanceSocket();
                 socket.emit("auth_when_start", token);
