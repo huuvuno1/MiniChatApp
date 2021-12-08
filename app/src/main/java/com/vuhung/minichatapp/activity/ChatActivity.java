@@ -1,5 +1,6 @@
 package com.vuhung.minichatapp.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,8 +9,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +49,7 @@ public class ChatActivity extends AppCompatActivity {
     private AppCompatImageView btnBack;
     private MessageAdapter messageAdapter;
     private List<Message> mListMessage;
+    private ImageView btnDelete;
     private GifImageView gifTyping;
     private User partner;
     @Override
@@ -92,6 +98,7 @@ public class ChatActivity extends AppCompatActivity {
         rcvMessage = findViewById(R.id.chatRecyclerView);
         btnBack = findViewById(R.id.imageBack);
         gifTyping = findViewById(R.id.typing);
+        btnDelete = findViewById(R.id.imageInfo);
     }
 
     private void bindDataFromSocket(String usernameFriend) {
@@ -140,6 +147,7 @@ public class ChatActivity extends AppCompatActivity {
         message.setContent(strMessage);
         message.setReceiver(receiver);
         message.setSender(Constant.MY_USERNAME);
+        message.setTime(new Date());
         mListMessage.add(message);
         messageAdapter.notifyDataSetChanged(); //load lai du lieu
         rcvMessage.scrollToPosition(mListMessage.size()-1);
@@ -184,14 +192,10 @@ public class ChatActivity extends AppCompatActivity {
         // event typing
         edtMessage.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -202,6 +206,33 @@ public class ChatActivity extends AppCompatActivity {
                     body.put("typing", "true");
                 MySocket.getInstanceSocket().emit("on_typing", new Gson().toJson(body));
             }
+        });
+
+        btnDelete.setOnClickListener(v -> {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+            builder1.setMessage("Are you sure you want to delete?");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            MySocket.getInstanceSocket().emit("delete_chat_history", partner.getUsername());
+                            dialog.cancel();
+                            finish();
+                        }
+                    });
+
+            builder1.setNegativeButton(
+                    "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
         });
     }
 

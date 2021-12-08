@@ -1,11 +1,15 @@
 package com.vuhung.minichatapp.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.Date;
 
-public class Message {
+public class Message implements Serializable {
     private String sender;
     private String receiver;
     private String content;
+    @SerializedName("timestamp")
     private Date time;
 
     public Message() {

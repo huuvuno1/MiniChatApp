@@ -12,6 +12,7 @@ import com.vuhung.minichatapp.R;
 import com.vuhung.minichatapp.model.Message;
 import com.vuhung.minichatapp.utils.Constant;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
@@ -47,6 +48,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             return;
         }
         holder.tvMessage.setText(message.getContent());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yyyy");
+        holder.textDateTime.setText(sdf.format(message.getTime()));
     }
 
     @Override
@@ -60,8 +63,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvMessage;
+        private TextView textDateTime;
+
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
+            textDateTime = itemView.findViewById(R.id.textDateTime);
             tvMessage = itemView.findViewById(R.id.textMessage);
         }
     }
