@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         MySocket.getInstanceSocket().emit("fetch_user_chat");
+        String token = getSharedPreferences(Constant.SHARE_PREFERENCES_NAME, MODE_PRIVATE).getString("token", "");
+        MySocket.start(token);
     }
 
     private void startSocket() {
@@ -171,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
         actionButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, UserActivity.class);
             startActivity(intent);
+        });
+        findViewById(R.id.imageProfile).setOnClickListener(v -> {
+            startActivity(new Intent(this, UpdateProfileActivity.class));
         });
     }
 

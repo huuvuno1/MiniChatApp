@@ -20,6 +20,9 @@
         android:theme="@style/Theme.MiniChatApp"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activity.UpdateProfileActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.UpdateFullnameActivity"
             android:exported="true" />
 
@@ -53,10 +56,10 @@
             android:exported="true" />
         <activity
             android:name=".activity.LoginActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
 
         <meta-data
             android:name="com.huawei.hms.client.channel.androidMarket"
