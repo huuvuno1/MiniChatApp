@@ -260,6 +260,74 @@ module.exports = {
 
                 await new Device(device).save()
             })
+
+
+            // delete chat history (both of them lost their messages)
+            socket.on('delete_chat_history', async username => {
+                console.log('delete chat with user: ' + username)
+                const result = await Chat.deleteOne({
+                    'members': [socket.username, username]
+                })
+
+                if (result.deletedCount == 0) {
+                    result = await Chat.deleteOne({
+                        'members': [username, socket.username]
+                    })
+                }
+
+                //io.to(`${socket.id}`).emit(JSON.stringify(user_chat))
+                
+                let ids = userOnline.get(username)
+                if (!ids) return
+                ids.forEach(idSocket => {
+                    io.to(idSocket).emit('status_user', JSON.stringify(user_chat))
+                })
+            })
+
+            // update profile
+            socket.on('update_profile', async new_info => {
+                const user = await User.findOne({
+                    "username": socket.username
+                })
+
+                await new User.save(user)
+                io.to(`${socket.id}`).emit('update_username', "OK")
+            })
+
+            // search message
+
+            // xem ai nhan tin nhieu nhat
+            socket.on('top_contact', async () => {
+                
+            })
+
+            // get my profile
+            socket.on('fetch_my_profile', async () => {
+                const user = await User.findOne({
+                    "username": socket.username
+                })
+
+                console.log("fetch user profile", user)
+
+                io.to(`${socket.id}`).emit("fetch_my_profile", JSON.stringify(user))
+            })
+
+
+            // update profile
+            socket.on('update_profile', async data => {
+                console.log(data)
+
+                let user = await User.findOne({
+                    "username": socket.username
+                })
+                console.log(user)
+
+                data = JSON.parse(data)
+                user.fullname = data.fullname
+                user.email = data.email
+                await new User(user).save();
+                io.to(`${socket.id}`).emit("update_profile", "OK")
+            })
         })
     }
 } 
