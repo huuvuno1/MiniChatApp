@@ -285,14 +285,14 @@ module.exports = {
             })
 
             // update profile
-            socket.on('update_profile', async new_info => {
-                const user = await User.findOne({
-                    "username": socket.username
-                })
+            // socket.on('update_profile', async new_info => {
+            //     const user = await User.findOne({
+            //         "username": socket.username
+            //     })
 
-                await new User.save(user)
-                io.to(`${socket.id}`).emit('update_username', "OK")
-            })
+            //     await new User.save(user)
+            //     io.to(`${socket.id}`).emit('update_username', "OK")
+            // })
 
             // search message
 
@@ -325,7 +325,9 @@ module.exports = {
                 data = JSON.parse(data)
                 user.fullname = data.fullname
                 user.email = data.email
-                await new User(user).save();
+                await User.findOneAndUpdate({
+                    "username": socket.username
+                }, user, {upsert: true});
                 io.to(`${socket.id}`).emit("update_profile", "OK")
             })
         })
