@@ -109,6 +109,22 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         Socket socket = MySocket.getInstanceSocket();
+        // emit seen message
+        socket.emit("seen_all_message", partner.getUsername());
+        socket.on("seen_all_message", data -> {
+            if (data == null || "null".equals(data[0]))
+                return;
+            // set all sent messages to seen
+            mListMessage.forEach(message -> {
+                if (message.getSender().equals(Constant.MY_USERNAME)) {
+                    message.setSeen(true);
+                }
+            });
+            runOnUiThread(() -> {
+                messageAdapter.notifyDataSetChanged();
+            });
+        });
+
         socket.emit("fetch_chat_history", usernameFriend);
         socket.on("fetch_chat_history", data -> {
             if (data == null || "null".equals(data[0]))
@@ -148,6 +164,7 @@ public class ChatActivity extends AppCompatActivity {
         message.setReceiver(receiver);
         message.setSender(Constant.MY_USERNAME);
         message.setTime(new Date());
+        message.setSeen(false);
         mListMessage.add(message);
         messageAdapter.notifyDataSetChanged(); //load lai du lieu
         rcvMessage.scrollToPosition(mListMessage.size()-1);
@@ -157,6 +174,7 @@ public class ChatActivity extends AppCompatActivity {
         Socket socket = MySocket.getInstanceSocket();
         socket.emit("send_chat", new Gson().toJson(message));
 
+        // cancel typing
         Map<String, String> body = new HashMap<>();
         body.put("receiver", partner.getUsername());
         body.put("typing", "false");
@@ -169,10 +187,13 @@ public class ChatActivity extends AppCompatActivity {
                return;
             Message message = new Gson().fromJson(data[0].toString(), Message.class);
             this.runOnUiThread(() -> {
+                // check user is chatting
                 if (partner.getUsername().equals(message.getSender())) {
                     mListMessage.add(message);
                     messageAdapter.notifyDataSetChanged();
                     rcvMessage.scrollToPosition(mListMessage.size() - 1);
+                    if (active)
+                        MySocket.getInstanceSocket().emit("seen_all_message", partner.getUsername());
                 }
             });
         });
@@ -238,5 +259,19 @@ public class ChatActivity extends AppCompatActivity {
 
     private String getReadableDateTime(Date date) {
         return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date);
+    }
+
+    private static boolean active = false;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        active = false;
     }
 }

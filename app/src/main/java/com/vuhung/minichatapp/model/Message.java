@@ -11,6 +11,15 @@ public class Message implements Serializable {
     private String content;
     @SerializedName("timestamp")
     private Date time;
+    private boolean seen;
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
+    }
 
     public Message() {
     }

@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.scrollToPosition(userChats.size() - 1);
 
         startSocket();
+        MySocket.getInstanceSocket().emit("fetch_user_chat");
     }
 
     @Override
@@ -99,7 +100,8 @@ public class MainActivity extends AppCompatActivity {
             List<UserChat> users = new Gson().fromJson(data[0].toString(), new TypeToken<List<UserChat>>(){}.getType());
             userChats.clear();
             userChats.addAll(users);
-            userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);
+//            userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);
+//            userChats.sort((u1, u2) -> u1.getFullName().compareTo(u2.getFullName()));
             runOnUiThread(() -> {
                 this.userChatAdapter.notifyDataSetChanged();
             });
@@ -128,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 userChats.add(0, user);
             }
 
-            userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);
+//            userChats.sort((u1, u2) -> u1.getTimeStamp().before(u2.getTimeStamp()) ? 1 : -1);
+//            userChats.sort((u1, u2) -> u1.getFullName().compareTo(u2.getFullName()));
             runOnUiThread(() -> {
                 this.userChatAdapter.notifyDataSetChanged();
             });

@@ -5,4 +5,5 @@
         android:bottomLeftRadius="@dimen/_24sdp"
         android:topLeftRadius="@dimen/_24sdp"
         android:topRightRadius="@dimen/_24sdp" />
+<!--    <stroke android:color="@color/green" android:width="@dimen/_3sdp" />-->
 </shape>

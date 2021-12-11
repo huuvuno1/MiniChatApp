@@ -75,15 +75,17 @@ public class StartActivity extends AppCompatActivity {
                 Socket socket = MySocket.getInstanceSocket();
                 socket.emit("auth_when_start", token);
                 socket.on("auth_when_start", data -> {
-                    MySocket.stop();
+
                     if ("OK".equals(data[0])) {
                         Intent intent = new Intent(StartActivity.this, MainActivity.class);
                         startActivity(intent);
                     }
                     else if ("MISSING_NAME".equals(data[0])) {
+                        MySocket.stop();
                         startActivity(new Intent(StartActivity.this, UpdateFullnameActivity.class));
                     }
                     else {
+                        MySocket.stop();
                         startActivity(new Intent(StartActivity.this, LoginActivity.class));
                     }
                     finish();

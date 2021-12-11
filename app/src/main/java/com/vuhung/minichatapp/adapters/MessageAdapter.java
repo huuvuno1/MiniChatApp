@@ -48,8 +48,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             return;
         }
         holder.tvMessage.setText(message.getContent());
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yy");
         holder.textDateTime.setText(sdf.format(message.getTime()));
+        if (message.getSender().equals(Constant.MY_USERNAME)) {
+            if (message.isSeen())
+                holder.tvSeen.setVisibility(View.VISIBLE);
+            else
+                holder.tvSeen.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -64,9 +70,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         private TextView tvMessage;
         private TextView textDateTime;
+        private TextView tvSeen;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
+            tvSeen = itemView.findViewById(R.id.textSeen);
             textDateTime = itemView.findViewById(R.id.textDateTime);
             tvMessage = itemView.findViewById(R.id.textMessage);
         }
