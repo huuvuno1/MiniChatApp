@@ -4,9 +4,8 @@ const User = require('../models/user');
 const Chat = require('../models/chat');
 const Device = require('../models/device');
 const userOnline = new Map();
-// {
-//     "username_value" => ["id_socket_1", "id2_socket_2"],
-//     "username_value" => ["id_socket_1", "id2_socket_2"],
+// Map {
+//     "username_value" => set(2){"id_socket_1", "id2_socket_2"}
 // }
 module.exports = {
     set: function(io) {
@@ -41,10 +40,14 @@ module.exports = {
             socket.on('register', async jwtToken => {
                 let username = await utils.getUsernameFromToken(jwtToken)
                 if (username) {
+                    socket.username = username
+
                     let user = await User.findOne({
                         'username': username
                     })
                     if (user) {
+                        
+
                         // save status for user
                         user.online = true;
                         await new User(user).save()
@@ -56,7 +59,7 @@ module.exports = {
                         user.password = ''
                         io.to(`${socket.id}`).emit('my_info', JSON.stringify(user))
 
-                        socket.username = username
+                        
                         //console.log('username', socket.username, username)
                         let ids = userOnline.get(username)
                         if (ids) {
@@ -102,22 +105,26 @@ module.exports = {
                         $in: [socket.username]
                     }
                 })
+                console.log('db chat: ', socket.username, chats)
                 
-                const users = await User.find()
+                const users = await User.find({})
+                console.log("user db:", users.length)
                 // //console.log("chat user", chats, socket.username)
+                
                 const result = []
                 chats.forEach(chat => {
                     const partner_username = chat.members[0] == socket.username ? chat.members[1] : chat.members[0]
-                    const user = users.filter(u => u.username == partner_username)[0]
+                    const user = users.find(u => u.username == partner_username)
                     const lastestMessage = chat.messages.pop()
                     const user_r = {...user._doc, content: lastestMessage.content, timestamp: lastestMessage.timestamp}
+                    console.log("infor: ",partner_username, user)
                    // user.content = 
                     //console.log("user detail chat", user)
                     result.push(user_r)
                 })
                 
 
-                // //console.log("fetch user chat from main", result)
+                console.log("fetch user chat from main", result)
                 io.to(`${socket.id}`).emit('fetch_user_chat', JSON.stringify(result))
 
             })
@@ -277,11 +284,11 @@ module.exports = {
 
                 //io.to(`${socket.id}`).emit(JSON.stringify(user_chat))
                 
-                let ids = userOnline.get(username)
-                if (!ids) return
-                ids.forEach(idSocket => {
-                    io.to(idSocket).emit('status_user', JSON.stringify(user_chat))
-                })
+                // let ids = userOnline.get(username)
+                // if (!ids) return
+                // ids.forEach(idSocket => {
+                //     io.to(idSocket).emit('status_user', JSON.stringify(user_chat))
+                // })
             })
 
             // update profile
@@ -330,6 +337,92 @@ module.exports = {
                 }, user, {upsert: true});
                 io.to(`${socket.id}`).emit("update_profile", "OK")
             })
+
+            // seen all message
+            socket.on('seen_all_message', async (usernameFriend) => {
+                let chat = await Chat.findOne({
+                    'members': [socket.username, usernameFriend]
+                })
+
+                if (!chat) {
+                    chat = await Chat.findOne({
+                        'members': [usernameFriend, socket.username]
+                    })
+                }
+
+                chat.messages.forEach(message => {
+                    if (message.sender == usernameFriend)
+                        message.seen = true
+                })
+
+                console.log('delete ', chat._id)
+                await new Chat(chat).save()
+
+                let ids = userOnline.get(usernameFriend)
+                if (ids) {
+                    ids.forEach(id => {
+                        io.to(id).emit('seen_all_message', socket.username)
+                    })
+                }
+                
+            })
+
+            // xem ai nhan tin voi minh nhieu nhat
+            socket.on('top_contact', async () => {
+                const chats = await Chat.find({
+                    "members": {
+                        $in: [socket.username]
+                    }
+                })
+
+                
+                if (!chats || chats.length == 0)
+                    return;
+
+                // find max
+                let i_max = 0;
+                chats.forEach((chat, i) => {
+                    if (chat.messages.length > chats[i].messages.length)
+                        i_max = i
+                })
+
+                console.log('max: ', chats[i])
+
+                // get username -> get info
+                const username = chats[i].members[0] == socket.username ? chats[i].members[1] : chats[i].members[0]
+                const user = await User.findOne({
+                    'username': username
+                })
+                
+                io.to(`${socket.id}`).emit('top_contact', JSON.stringify(user))
+            })
+
+            // add friend
+            socket.on('request_add_friend', async user_receiver => {
+                let ids = userOnline.get(user_receiver);
+                
+                if (!ids)
+                    return;
+
+                    console.log("ok")
+                const user = await User.findOne({
+                    "username": socket.username
+                })
+                ids.forEach(id => {
+                    io.to(`${id}`).emit('request_add_friend', user)
+                })
+            })
+
+            // add friend
+            socket.on('reply', async (username, str_reply) => {
+                let ids = userOnline.get(username);
+                if (!ids)
+                    return;
+                ids.forEach(id => {
+                    io.to(`${id}`).emit('request_add_friend', str_reply)
+                })
+            })
+
         })
     }
 } 
